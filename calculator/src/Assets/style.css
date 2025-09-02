@@ -1,0 +1,66 @@
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* horizontal aligment*/
+    height: 120vh; /*viewport height & width*/
+    background-color: hwb(0 79% 19%); 
+}
+
+#calculator {
+    font-family: Arial, sans-serif;
+    background-color: black;
+    border-radius: 15px;
+    max-width: 500px; /* calculator width*/
+    overflow: hidden; /* hides any content that extends beyond the boundaries of the calculator*/
+}
+
+#display {
+    padding: 10px;
+    font-size: 5rem;
+    text-align: right; /* aligns the calculation result to the right*/
+    border: 10px;
+    background-color: hsl(0, 0%, 30%); /* kind of gray color*/
+    color: white; /* Display result color is white*/
+}
+
+#keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 equal columns 1fr takes equal amount of space*/
+    gap: 10px; /* hv gap between keys*/
+    padding: 25px;
+}
+
+
+button {
+    width: 100px; /* make buttons circles*/
+    height: 100px; /* make buttons circles*/
+    border-radius: 50px; /* make buttons circles*/
+    border: none;  /* To remove border*/
+    background-color: hsl(0, 0%, 30%); /* button background color*/
+    color: white; /* button text color is white*/
+    font-size: 3rem;   /* 3*16=48px*/
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: gray; /* hsl(10, 0%, 40%);  changes button color intensity when it's hovered*/
+}
+
+button:active {
+    background-color: lightgray; /*hsl(0, 0%, 60%);  changes button color intensity when button is active*/
+}
+
+.operator-key {
+    background-color: orange; /* operators button color*/
+
+}
+
+.operator-key:hover {
+    background-color: yellow; /* changes operator button color intensity when is hovered*/
+}
+
+.operator-key:active {
+    background-color: hsl(35, 100%, 75%); /* operators button color when it's active*/
+}
