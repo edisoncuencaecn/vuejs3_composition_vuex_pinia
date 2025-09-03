@@ -48,19 +48,11 @@ button:hover {
     background-color: gray; /* hsl(10, 0%, 40%);  changes button color intensity when it's hovered*/
 }
 
-button:active {
-    background-color: lightgray; /*hsl(0, 0%, 60%);  changes button color intensity when button is active*/
-}
-
-.operator-key {
+.operator-button {
     background-color: orange; /* operators button color*/
 
 }
 
-.operator-key:hover {
+.operator-button:hover {
     background-color: yellow; /* changes operator button color intensity when is hovered*/
-}
-
-.operator-key:active {
-    background-color: hsl(35, 100%, 75%); /* operators button color when it's active*/
 }
