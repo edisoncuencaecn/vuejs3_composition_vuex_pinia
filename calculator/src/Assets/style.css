@@ -1,10 +1,10 @@
 body {
     margin: 0;
-    display: flex;
+    display: flex; /*  transforms into a block-level flex container, and its direct children become flex items for alignment, spacing, and ordering. */
     justify-content: center;
     align-items: center; /* horizontal aligment*/
-    height: 120vh; /*viewport height & width*/
-    background-color: hwb(0 79% 19%); 
+    height: 100vh; /* 100% viewport height & width*/
+    background-color: lightgray; 
 }
 
 #calculator {
@@ -17,17 +17,17 @@ body {
 
 #display {
     padding: 10px;
-    font-size: 5rem;
+    font-size: 5rem; /*5 x 16px*/
     text-align: right; /* aligns the calculation result to the right*/
     border: 10px;
-    background-color: hsl(0, 0%, 30%); /* kind of gray color*/
-    color: white; /* Display result color is white*/
+    background-color: grey; 
+    color: white; /* text result color is white*/
 }
 
 #keys {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 equal columns 1fr takes equal amount of space*/
-    gap: 10px; /* hv gap between keys*/
+    display: grid; /* Grid Layout container for arranging content or grid items*/
+    grid-template-columns: repeat(4, 1fr); /* 4 equal columns 1 fraction takes equal amount of available space within the grid container*/
+    gap: 10px; /* horizontal/vertical gap between keys*/
     padding: 25px;
 }
 
@@ -37,7 +37,7 @@ button {
     height: 100px; /* make buttons circles*/
     border-radius: 50px; /* make buttons circles*/
     border: none;  /* To remove border*/
-    background-color: hsl(0, 0%, 30%); /* button background color*/
+    background-color: hsl(0, 0%, 30%); /* color wheel (Hue 0-360 0r 120g 240b, Saturation 0 shade-100% pure, Lightness 0-100% 0b 50n 100w) , background color*/
     color: white; /* button text color is white*/
     font-size: 3rem;   /* 3*16=48px*/
     font-weight: bold;
@@ -45,14 +45,13 @@ button {
 }
 
 button:hover {
-    background-color: gray; /* hsl(10, 0%, 40%);  changes button color intensity when it's hovered*/
+    background-color: gray; /* changes button color intensity when it's hovered*/
 }
 
 .operator-button {
     background-color: orange; /* operators button color*/
-
 }
 
 .operator-button:hover {
-    background-color: yellow; /* changes operator button color intensity when is hovered*/
+    background-color: yellow; /* changes operator button color intensity when it's hovered*/
 }

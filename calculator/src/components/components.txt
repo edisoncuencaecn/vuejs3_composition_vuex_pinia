@@ -1,0 +1,2 @@
+Listen computed data via props from parent component App.vue view parent components
+Also passing computed data via emit to parent component App.vue

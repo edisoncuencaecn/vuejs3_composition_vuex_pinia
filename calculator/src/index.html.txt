@@ -1,0 +1,1 @@
+index.app is where the UI is rendered

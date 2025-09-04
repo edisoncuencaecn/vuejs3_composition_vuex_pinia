@@ -1,0 +1,1 @@
+'stores' Directory To setup setup/composition or options stores.js via pinia or vue in order to create a Global state managment to share state, actions & getters amoung parent or child components

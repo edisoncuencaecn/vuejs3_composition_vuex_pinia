@@ -1,0 +1,2 @@
+'router' Directory to setup index.js which contains the project's routes.
+route level code-splitting
