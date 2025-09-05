@@ -20,8 +20,9 @@ body {
     font-size: 5rem; /*5 x 16px*/
     text-align: right; /* aligns the calculation result to the right*/
     border: 10px;
-    background-color: grey; 
+    background-color: black;
     color: white; /* text result color is white*/
+    overflow: hidden; /* hides any content that extends beyond the boundaries of the calculator*/
 }
 
 #keys {
