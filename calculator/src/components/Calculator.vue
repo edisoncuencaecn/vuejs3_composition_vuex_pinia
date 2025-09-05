@@ -33,19 +33,28 @@
    import Display from './Display.vue'
    import {ref} from 'vue';
    let result = ref('0.00');
+   let numDigits = ref(0);
    
    //`` backticks embed expressions (variables, function calls, arithmetic operations, etc.) directly within a string.
    // removes left first '0' or '.' and embed pressed key to main result string
    const toDisplay = (key) => {
+     numDigits.value++;
      result.value =  result.value[0] === "0" ? result.value.charAt(1,result.value.length) : result.value;
      result.value =  result.value[0] === "." ? result.value.charAt(1,result.value.length) : result.value;
      result.value = `${result.value}${key}`;  
-   };
+     if ((result.value.length > 10)||(numDigits.value>10)){ 
+       result.value = "error";      
+     };
+    };
    
    const signDisplay = () => {
      // removes '-' if it's already there, otherwise add it
+     numDigits.value++;
      try {
        result.value =  result.value[0] === "-" ? `${result.value.slice(1,result.value.length)}` : `-${result.value}`;
+       if ((result.value.length > 10)||(numDigits.value>10)){ 
+         result.value = "error";      
+       };
      } catch (error) {
        result.value = "error";
     }
@@ -53,6 +62,7 @@
 
    const clearDisplay = () => {
      result.value = '0';
+     numDigits.value = 0;
    };
 
    const help = () => {
@@ -70,6 +80,9 @@
   const calculate = () => {
     try {
       result.value = eval(`${result.value}`); 
+      if ((result.value> 1000000000) || (result.value.length > 10)){
+        result.value = "error";
+      } 
     } catch (error) {
       result.value = "error";
     }
