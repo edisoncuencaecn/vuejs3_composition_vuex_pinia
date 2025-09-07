@@ -43,6 +43,10 @@ input {
  align-items: left;
  justify-content: left;
 }
+input:focus {
+  outline: none;
+}
+
 
 #keys {
     display: grid; /* Grid Layout container for arranging content or grid items*/

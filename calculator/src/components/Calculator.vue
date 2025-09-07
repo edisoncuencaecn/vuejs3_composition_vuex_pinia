@@ -2,7 +2,7 @@
     <div id="calculator">
     <Display v-bind:result="result" />
     <div v-bind:class="{ 'add-keyboard': isKeyboard, 'remove-keyboard': !isKeyboard}">
-      <input v-on:keyup="handleKeyUp" autofocus ref="autoInput" placeholder="use keyboard keys as calculator buttons"></input>
+      <input v-on:keyup="handleKeyUp" autofocus ref="autoInput"></input>
     </div>
     <div id="keys">
         <button v-on:click="clearDisplay()" class="operator-button">AC</button>
@@ -74,6 +74,7 @@
      numDigits.value++;
      result.value =  result.value[0] === "0" ? result.value.charAt(1,result.value.length) : result.value;
      result.value =  result.value[0] === "." ? result.value.charAt(1,result.value.length) : result.value;
+     result.value =  result.value[0] === "-" ? result.value.charAt(1,result.value.length) : result.value;
      // if keyboard key is a n operations element, it means it won't be added to the string nor diplay it
       if (isKeyForOperation(event.key)){
         switch (event.key) {
@@ -93,7 +94,7 @@
        result.value = `${result.value}${event.key}`; 
        // To remove 'Shift' key from keyboardEvent 'Shift =' & 'Shift *'
        result.value =  result.value.indexOf(shift) !== -1 ? result.value.slice(0, (result.value.indexOf(shift)), "+") : result.value;
-       if ((result.value.length > 10)||(numDigits.value>10)){ 
+       if ((result.value.length > 10000000000)||(numDigits.value>11)){ 
          result.value = "error";      
        };
      }
@@ -113,8 +114,9 @@
      numDigits.value++;
      result.value =  result.value[0] === "0" ? result.value.charAt(1,result.value.length) : result.value;
      result.value =  result.value[0] === "." ? result.value.charAt(1,result.value.length) : result.value;
+     result.value =  result.value[0] === "-" ? result.value.charAt(1,result.value.length) : result.value;
      result.value = `${result.value}${key}`;  
-     if ((result.value.length > 10)||(numDigits.value>10)){ 
+     if ((result.value.length > 10000000000)||(numDigits.value > 11)){ 
        result.value = "error";      
      };
     };
@@ -124,7 +126,7 @@
      numDigits.value++;
      try {
        result.value =  result.value[0] === "-" ? `${result.value.slice(1,result.value.length)}` : `-${result.value}`;
-       if ((result.value.length > 10)||(numDigits.value>10)){ 
+       if ((result.value.length > 10000000000)||(numDigits.value > 11)){ 
          result.value = "error";      
        };
      } catch (error) {
@@ -144,6 +146,7 @@
    const percentToDisplay = () => {
      try {
        result.value = `${result.value}/100`;   
+       //calculate();
      } catch {
        result.value = "error";
      }
@@ -152,7 +155,7 @@
   const calculate = () => {
     try {
       result.value = eval(`${result.value}`); 
-      if ((result.value> 1000000000) || (result.value.length > 10)){
+      if ((result.value.length > 10000000000) || (numDigits > 11)){
         result.value = "error";
       } 
     } catch (error) {
