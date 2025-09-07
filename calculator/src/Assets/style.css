@@ -11,7 +11,7 @@ body {
     font-family: Arial, sans-serif;
     background-color: black;
     border-radius: 15px;
-    max-width: 500px; /* calculator width*/
+    max-width: 480px; /* calculator width*/
     overflow: hidden; /* hides any content that extends beyond the boundaries of the calculator*/
 }
 
@@ -23,6 +23,25 @@ body {
     background-color: black;
     color: white; /* text result color is white*/
     overflow: hidden; /* hides any content that extends beyond the boundaries of the calculator*/
+}
+
+.add-keyboard{
+    float: right;
+}
+
+.remove-keyboard{
+    display: none;
+}
+input {
+ background-color: black;
+ width:15rem;
+ padding: none;
+ border: 1px solid black;
+ color: black;
+ text-align: left;
+ overflow: hidden; /* hides any content that extends beyond the boundaries of the calculator*/
+ align-items: left;
+ justify-content: left;
 }
 
 #keys {
@@ -56,3 +75,6 @@ button:hover {
 .operator-button:hover {
     background-color: yellow; /* changes operator button color intensity when it's hovered*/
 }
+
+
+
