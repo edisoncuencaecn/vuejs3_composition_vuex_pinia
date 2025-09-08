@@ -54,7 +54,7 @@
     // set focus ends
 
    let result = ref('0.00');
-   let numDigits = ref(0); // max numver validation
+   let numDigits = ref(0); // max number validation
    // starts keyboard
    const operations = ref(['=','%','Delete']); 
    const allowedKeys = ref(['0','1','2','3','4','5','6','7','8','9','+','-','/','*','=','%','Delete']); 
@@ -71,33 +71,34 @@
    const handleKeyUp = (event) => {
      event.preventDefault();
      if (!hasAllowedKeys(event.key)){return};
-     numDigits.value++;
-     result.value =  result.value[0] === "0" ? result.value.charAt(1,result.value.length) : result.value;
-     result.value =  result.value[0] === "." ? result.value.charAt(1,result.value.length) : result.value;
-     result.value =  result.value[0] === "-" ? result.value.charAt(1,result.value.length) : result.value;
-     // if keyboard key is a n operations element, it means it won't be added to the string nor diplay it
-      if (isKeyForOperation(event.key)){
-        switch (event.key) {
-         case operations.value[0]:
-           calculate();
-           break;
-         case operations.value[1]:
-           percentToDisplay();
-           break;
-         case operations.value[2]:
-           clearDisplay();
-           break;
-         default:
+       //numDigits.value++;
+       result.value =  result.value[0] === "0" ? result.value.charAt(1,result.value.length) : result.value;
+       result.value =  result.value[0] === "." ? result.value.charAt(1,result.value.length) : result.value;
+       result.value =  result.value[0] === "-" ? result.value.charAt(1,result.value.length) : result.value;
+       // if keyboard key is a n operations element, it means it won't be added to the string nor diplay it
+       if (isKeyForOperation(event.key)){
+         switch (event.key) {
+          case operations.value[0]:
+            calculate();
+            break;
+          case operations.value[1]:
+            percentToDisplay();
+            break;
+          case operations.value[2]:
+            clearDisplay();
+            break;
+          default:
             break
         }
-     }else{
-       result.value = `${result.value}${event.key}`; 
-       // To remove 'Shift' key from keyboardEvent 'Shift =' & 'Shift *'
-       result.value =  result.value.indexOf(shift) !== -1 ? result.value.slice(0, (result.value.indexOf(shift)), "+") : result.value;
-       if ((result.value.length > 10000000000)||(numDigits.value>11)){ 
-         result.value = "error";      
-       };
-     }
+      }else{
+        result.value = `${result.value}${event.key}`; 
+        numDigits = result.value.length;
+        // To remove 'Shift' key from keyboardEvent 'Shift =' & 'Shift *'
+        result.value =  result.value.indexOf(shift) !== -1 ? result.value.slice(0, (result.value.indexOf(shift)), "+") : result.value;
+        if ((result.value.length > 10000000000)||(numDigits.value>11)){ 
+          result.value = "error";      
+        };
+      }
     };
     
     const isKeyForOperation = (key) => {
@@ -111,11 +112,12 @@
    //`` backticks embed expressions (variables, function calls, arithmetic operations, etc.) directly within a string.
    // removes left first '0' or '.' and embed pressed key to main result string
    const toDisplay = (key) => {
-     numDigits.value++;
      result.value =  result.value[0] === "0" ? result.value.charAt(1,result.value.length) : result.value;
      result.value =  result.value[0] === "." ? result.value.charAt(1,result.value.length) : result.value;
-     result.value =  result.value[0] === "-" ? result.value.charAt(1,result.value.length) : result.value;
+     //result.value =  result.value[0] === "-" ? result.value.charAt(1,result.value.length) : result.value;
      result.value = `${result.value}${key}`;  
+     numDigits = result.value.length;
+     console.log(numDigits);
      if ((result.value.length > 10000000000)||(numDigits.value > 11)){ 
        result.value = "error";      
      };
@@ -123,11 +125,13 @@
    
    const signDisplay = () => {
      // removes '-' if it's already there, otherwise add it
-     numDigits.value++;
      try {
        result.value =  result.value[0] === "-" ? `${result.value.slice(1,result.value.length)}` : `-${result.value}`;
        if ((result.value.length > 10000000000)||(numDigits.value > 11)){ 
          result.value = "error";      
+       }else{
+        numDigits = result.value.length;
+         console.log(numDigits);
        };
      } catch (error) {
        result.value = "error";
