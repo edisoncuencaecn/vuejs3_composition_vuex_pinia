@@ -1,3 +1,5 @@
+<!-- Listen computed data via props from parent component App.vue view parent components
+Also passing computed data via emit to parent component App.vue-->
 <template>
     <div id="calculator">
     <Display v-bind:result="result" />
@@ -56,8 +58,8 @@
    let result = ref('0.00');
    let numDigits = ref(0); // max number validation
    // starts keyboard
-   const operations = ref(['=','%','Delete']); 
-   const allowedKeys = ref(['0','1','2','3','4','5','6','7','8','9','+','-','/','*','=','%','Delete']); 
+   const operations = ref(['=','%','Delete','Enter']); 
+   const allowedKeys = ref(['0','1','2','3','4','5','6','7','8','9','+','-','/','*','=','%','Delete','Enter']); 
    const shift = 'Shift'; 
    let isKeyboard = ref(false); 
 
@@ -71,10 +73,8 @@
    const handleKeyUp = (event) => {
      event.preventDefault();
      if (!hasAllowedKeys(event.key)){return};
-       //numDigits.value++;
-       result.value =  result.value[0] === "0" ? result.value.charAt(1,result.value.length) : result.value;
-       result.value =  result.value[0] === "." ? result.value.charAt(1,result.value.length) : result.value;
-       result.value =  result.value[0] === "-" ? result.value.charAt(1,result.value.length) : result.value;
+       result.value =  result.value[0] === "0" ? result.value.charAt(1,result.value?.length ?? 0) : result.value; // Optional chaining data?.length ?? 0 (ES2020)
+       result.value =  result.value[0] === "." ? result.value.charAt(1,result.value?.length ?? 0) : result.value;
        // if keyboard key is a n operations element, it means it won't be added to the string nor diplay it
        if (isKeyForOperation(event.key)){
          switch (event.key) {
@@ -87,15 +87,18 @@
           case operations.value[2]:
             clearDisplay();
             break;
+          case operations.value[3]:
+            calculate();
+            break;
           default:
             break
         }
       }else{
         result.value = `${result.value}${event.key}`; 
-        numDigits = result.value.length;
+        numDigits.value = result.value?.length ?? 0; // Optional chaining data?.length ?? 0 (ES2020)
         // To remove 'Shift' key from keyboardEvent 'Shift =' & 'Shift *'
         result.value =  result.value.indexOf(shift) !== -1 ? result.value.slice(0, (result.value.indexOf(shift)), "+") : result.value;
-        if ((result.value.length > 10000000000)||(numDigits.value>11)){ 
+        if ((result.value > 10000000000)||(numDigits.value > 11)){ 
           result.value = "error";      
         };
       }
@@ -112,26 +115,29 @@
    //`` backticks embed expressions (variables, function calls, arithmetic operations, etc.) directly within a string.
    // removes left first '0' or '.' and embed pressed key to main result string
    const toDisplay = (key) => {
-     result.value =  result.value[0] === "0" ? result.value.charAt(1,result.value.length) : result.value;
-     result.value =  result.value[0] === "." ? result.value.charAt(1,result.value.length) : result.value;
-     //result.value =  result.value[0] === "-" ? result.value.charAt(1,result.value.length) : result.value;
+     if (isKeyboard){
+        setFocus(); // sets automatic keyboard keys focus
+     };
+     result.value =  result.value[0] === "0" ? result.value.charAt(1,result.value?.length ?? 0) : result.value;
+     result.value =  result.value[0] === "." ? result.value.charAt(1,result.value?.length ?? 0) : result.value;
      result.value = `${result.value}${key}`;  
-     numDigits = result.value.length;
-     console.log(numDigits);
-     if ((result.value.length > 10000000000)||(numDigits.value > 11)){ 
+     numDigits.value = result.value?.length ?? 0; // Optional chaining data?.length ?? 0 (ES2020)
+     if ((result.value > 10000000000)||(numDigits.value > 11)){ 
        result.value = "error";      
      };
     };
    
    const signDisplay = () => {
+     if (isKeyboard){
+        setFocus(); // sets automatic keyboard keys focus
+     };
      // removes '-' if it's already there, otherwise add it
      try {
-       result.value =  result.value[0] === "-" ? `${result.value.slice(1,result.value.length)}` : `-${result.value}`;
-       if ((result.value.length > 10000000000)||(numDigits.value > 11)){ 
+       result.value =  result.value <= 0 ? result.value *(-1) : `-${result.value}`;
+       if ((result.value > 10000000000)||(numDigits.value > 11)){ 
          result.value = "error";      
        }else{
-        numDigits = result.value.length;
-         console.log(numDigits);
+        numDigits.value = result.value?.length ?? 0; // Optional chaining data?.length ?? 0 (ES2020)
        };
      } catch (error) {
        result.value = "error";
@@ -139,27 +145,32 @@
    };
 
    const clearDisplay = () => {
+     if (isKeyboard){
+        setFocus(); // sets automatic keyboard keys focus
+     };
      result.value = '0';
      numDigits.value = 0;
    };
 
-   const help = () => {
-     alert('type percentNumber followed by "%" then "x" followed by the number to get % from, finally "="');
-   }
 
    const percentToDisplay = () => {
+     if (isKeyboard){
+        setFocus(); // sets automatic keyboard keys focus
+     };
      try {
        result.value = `${result.value}/100`;   
-       //calculate();
      } catch {
        result.value = "error";
      }
    };
    
   const calculate = () => {
+     if (isKeyboard){
+        setFocus(); // sets automatic keyboard keys focus
+     };
     try {
       result.value = eval(`${result.value}`); 
-      if ((result.value.length > 10000000000) || (numDigits > 11)){
+      if ((result.value > 10000000000) || (numDigits > 11)){
         result.value = "error";
       } 
     } catch (error) {

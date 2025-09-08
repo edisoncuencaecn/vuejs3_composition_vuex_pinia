@@ -61,23 +61,26 @@ button {
     height: 100px; /* make buttons circles*/
     border-radius: 50px; /* make buttons circles*/
     border: none;  /* To remove border*/
-    background-color: hsl(0, 0%, 30%); /* color wheel (Hue 0-360 0r 120g 240b, Saturation 0 shade-100% pure, Lightness 0-100% 0b 50n 100w) , background color*/
-    color: white; /* button text color is white*/
+    background-color:rgb(83, 83, 75);
+    color: white;
     font-size: 3rem;   /* 3*16=48px*/
     font-weight: bold;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: gray; /* changes button color intensity when it's hovered*/
+    background-color: rgb(171,171,166); /* changes button color intensity when it's hovered*/
+    color: black;
 }
 
 .operator-button {
     background-color: orange; /* operators button color*/
+    color: white;
 }
 
 .operator-button:hover {
-    background-color: yellow; /* changes operator button color intensity when it's hovered*/
+    background-color:rgb(241, 237, 126);/* changes operator button color intensity when it's hovered*/
+    color: black;
 }
 
 
