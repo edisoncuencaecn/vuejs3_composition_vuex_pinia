@@ -56,10 +56,14 @@ Also passing computed data via emit to parent component App.vue-->
     // set focus ends
 
    let result = ref('0.00');
-   let numDigits = ref(0); // max number validation
+   let resultPrevious = ref('0.00');
+   let keyPrevious = ref('0');
+   let numDigits = ref(0); 
    // starts keyboard
    const operations = ref(['=','%','Delete','Enter']); 
-   const allowedKeys = ref(['0','1','2','3','4','5','6','7','8','9','+','-','/','*','=','%','Delete','Enter']); 
+   const allowedKeys = ref(['0','1','2','3','4','5','6','7','8','9','+','-','/','*','=','%','Delete','Enter','.']); 
+   const operators = ref(['+','-','/','*','=','%','.']); 
+   const mathOperators = ref(['+','-','/','*','%']); 
    const shift = 'Shift'; 
    let isKeyboard = ref(false); 
 
@@ -73,8 +77,11 @@ Also passing computed data via emit to parent component App.vue-->
    const handleKeyUp = (event) => {
      event.preventDefault();
      if (!hasAllowedKeys(event.key)){return};
-       result.value =  result.value[0] === "0" ? result.value.charAt(1,result.value?.length ?? 0) : result.value; // Optional chaining data?.length ?? 0 (ES2020)
-       result.value =  result.value[0] === "." ? result.value.charAt(1,result.value?.length ?? 0) : result.value;
+        if (result.value === 'error' || result.value === 'Infinity' || result.value === '-Infinity'){
+         result.value ='';
+        };
+       result.value =  result.value[0] === "0" ? result.value.charAt(1,result.value?.length ?? 0) : `${result.value}`; // Optional chaining data?.length ?? 0 (ES2020)
+       result.value =  result.value[0] === "." ? result.value.charAt(1,result.value?.length ?? 0) : `${result.value}`;
        // if keyboard key is a n operations element, it means it won't be added to the string nor diplay it
        if (isKeyForOperation(event.key)){
          switch (event.key) {
@@ -94,12 +101,22 @@ Also passing computed data via emit to parent component App.vue-->
             break
         }
       }else{
+        // if first input is '0' and the second is '.' then accepts it because it's a decimal number to be input
+        result.value =  !mathOperatorExist() && keyPrevious.value == "0" && event.key === "." ?  `${" 0."}` : `${result.value}`; // adding condition && there's not already a operator
+        resultPrevious.value = result.value ? result.value : `${result.value}`;
         result.value = `${result.value}${event.key}`; 
+        keyPrevious.value = event.key;
+        // removes first character when it's an operator  
+        result.value =  isKeyForOperators(result.value[0]) && (result.value?.length ?? 0) === 1 ? "0.00" : result.value;
+        // removes second operator if it's input in a row
+        result.value =  isKeyForOperators(result.value[(result.value?.length ?? 0)-1]) && isKeyForOperators(result.value[(result.value?.length ?? 0)-2]) ? result.value.slice(0,((result.value?.length ?? 0)-1)) : result.value; //here
+        // removes second operator period if it's input 
+        result.value =  isKeyForOperators(result.value[(result.value?.length ?? 0)-1]) && isPeriodKeyReplicated('.') ? result.value.slice(0,((result.value?.length ?? 0)-1)) : result.value; //here
         numDigits.value = result.value?.length ?? 0; // Optional chaining data?.length ?? 0 (ES2020)
         // To remove 'Shift' key from keyboardEvent 'Shift =' & 'Shift *'
         result.value =  result.value.indexOf(shift) !== -1 ? result.value.slice(0, (result.value.indexOf(shift)), "+") : result.value;
-        if ((result.value > 10000000000)||(numDigits.value > 11)){ 
-          result.value = "error";      
+        if (numDigits.value > 21){ 
+          result.value = resultPrevious.value; // just won't add the new digit nor operator    
         };
       }
     };
@@ -107,9 +124,44 @@ Also passing computed data via emit to parent component App.vue-->
     const isKeyForOperation = (key) => {
        return operations.value.includes(key);
     };
+
+    const isKeyForOperators = (key) => {
+       return operators.value.includes(key);
+    };
+
+    // find all the duplicated characters in result.value but returns true if one of those is a period '.'
+    const isPeriodKeyReplicated = (key) => {
+      const duplicates = new Set();
+      const seenCharacters = new Set();
+      for (let i = 0; i < result.value.length; i++) {
+        const char = result.value[i];
+        if (seenCharacters.has(char)) {
+          duplicates.add(char);
+        }  else {
+          seenCharacters.add(char);
+        }
+        if (mathOperators.value.includes(char)) {
+          // Reset seencharacters if a matOperator is encountered in between them
+          seenCharacters.clear();
+        }
+      }
+      return (duplicates.size > 0 && duplicates.has(key));
+    };
+
+    const mathOperatorExist = () => {
+      for (let i = 0; i < result.value.length; i++) {
+        const char = result.value[i];
+        if (mathOperators.value.includes(char)) {
+         return true;
+        }
+      }
+      return false;
+    };
+    
     const hasAllowedKeys = (key) => {
        return allowedKeys.value.includes(key);
     };
+  
     // ends keyboard
 
    //`` backticks embed expressions (variables, function calls, arithmetic operations, etc.) directly within a string.
@@ -118,12 +170,26 @@ Also passing computed data via emit to parent component App.vue-->
      if (isKeyboard){
         setFocus(); // sets automatic keyboard keys focus
      };
-     result.value =  result.value[0] === "0" ? result.value.charAt(1,result.value?.length ?? 0) : result.value;
-     result.value =  result.value[0] === "." ? result.value.charAt(1,result.value?.length ?? 0) : result.value;
+     if (result.value === 'error' || result.value === 'Infinity' || result.value === '-Infinity'){
+       result.value ='';
+     };
+     result.value =  result.value[0] === "0" ? result.value.charAt(1,result.value?.length ?? 0) : `${result.value}`;
+     result.value =  result.value[0] === "." ? result.value.charAt(1,result.value?.length ?? 0) : `${result.value}`;
+     // if first input is '0' and the second is '.' then accepts it because it's a decimal number to be input 
+     result.value =  !mathOperatorExist() && keyPrevious.value == "0" && key === "." ?  `${" 0."}` : `${result.value}`; // adding condition && there's not already a operator
+     resultPrevious.value = result.value ? result.value : `${result.value}`;
      result.value = `${result.value}${key}`;  
+     keyPrevious.value = key;
+     // removes first character when it's an operator  
+     result.value =  isKeyForOperators(result.value[0]) && (result.value?.length ?? 0) === 1 ? "0.00" : result.value;
+     // removes second operator if it's input in a row
+     result.value =  isKeyForOperators(result.value[(result.value?.length ?? 0)-1]) && isKeyForOperators(result.value[(result.value?.length ?? 0)-2]) ? result.value.slice(0,((result.value?.length ?? 0)-1)) : result.value; //here
+     // removes second operator period if it's input 
+     result.value =  isKeyForOperators(result.value[(result.value?.length ?? 0)-1]) && isPeriodKeyReplicated('.') ? result.value.slice(0,((result.value?.length ?? 0)-1)) : result.value; //here
+
      numDigits.value = result.value?.length ?? 0; // Optional chaining data?.length ?? 0 (ES2020)
-     if ((result.value > 10000000000)||(numDigits.value > 11)){ 
-       result.value = "error";      
+     if (numDigits.value > 21){ 
+       result.value = resultPrevious.value; // just won't add the new digit nor operator    
      };
     };
    
@@ -131,51 +197,79 @@ Also passing computed data via emit to parent component App.vue-->
      if (isKeyboard){
         setFocus(); // sets automatic keyboard keys focus
      };
+     if (result.value === 'error' || result.value === 'Infinity' || result.value === '-Infinity'){
+         return result.value ='0.00';
+     };
+     resultPrevious.value = result.value ? result.value : `${result.value}`;
+     if  (isKeyForOperators(result.value[(result.value?.length ?? 0)-1])){
+        // if last character is an operator, don't do anything because the formula is pending
+        result.value = resultPrevious.value; // just won't add the new digit nor operator  
+        return result.value;
+     }
      // removes '-' if it's already there, otherwise add it
      try {
-       result.value =  result.value <= 0 ? result.value *(-1) : `-${result.value}`;
-       if ((result.value > 10000000000)||(numDigits.value > 11)){ 
-         result.value = "error";      
-       }else{
-        numDigits.value = result.value?.length ?? 0; // Optional chaining data?.length ?? 0 (ES2020)
+       resultPrevious.value = result.value ? result.value : `${result.value}`;
+       result.value = `${eval(result.value)}`; // evaluates if +/- is input in a pending formula
+       result.value =  result.value <= 0 ? `${result.value *(-1)}` : `-${result.value}`;
+       numDigits.value = result.value?.length ?? 0; // Optional chaining data?.length ?? 0 (ES2020)
+       if (numDigits.value > 21){ 
+        result.value = resultPrevious.value; // just won't add the new digit nor operator    
        };
      } catch (error) {
        result.value = "error";
-    }
+     }
    };
 
    const clearDisplay = () => {
      if (isKeyboard){
         setFocus(); // sets automatic keyboard keys focus
      };
-     result.value = '0';
+     result.value = '0.00';
+     resultPrevious.value = '0.00';
      numDigits.value = 0;
+     keyPrevious.value = '0';
    };
 
 
    const percentToDisplay = () => {
+     resultPrevious.value = result.value ? result.value : `${result.value}`;
      if (isKeyboard){
         setFocus(); // sets automatic keyboard keys focus
      };
+   
      try {
-       result.value = `${result.value}/100`;   
+       // removes first character when it's an operator  
+       if (result.value > 0) {
+         console.log((result.value));
+         result.value = `${result.value}/100`;  
+         numDigits.value = result.value?.length ?? 0; // Optional chaining data?.length ?? 0 (ES2020)
+         if (numDigits.value > 21){ 
+           result.value = resultPrevious.value; // just won't add the new digit nor operator 
+         } 
+      }
      } catch {
        result.value = "error";
      }
    };
    
   const calculate = () => {
-     if (isKeyboard){
-        setFocus(); // sets automatic keyboard keys focus
-     };
-    try {
-      result.value = eval(`${result.value}`); 
-      if ((result.value > 10000000000) || (numDigits > 11)){
-        result.value = "error";
-      } 
-    } catch (error) {
-      result.value = "error";
-    }
+    if (isKeyboard){
+      setFocus(); // sets automatic keyboard keys focus
+    };
+    resultPrevious.value = result.value ? result.value : `${result.value}`;
+    if  (isKeyForOperators(result.value[(result.value?.length ?? 0)-1])){
+        // if last character is an operator, don't do anything because the formula is pending
+    }else{
+       try {
+        //result.value = `${eval(result.value)}`;
+        result.value = `${parseFloat(eval(result.value).toFixed(11))}`;
+         if (numDigits > 21){
+           result.value = resultPrevious.value; // just won't add the new digit nor operator 
+         } 
+       } catch (error) {
+         result.value = "error";
+       }
+    };
    };
 
 </script>
